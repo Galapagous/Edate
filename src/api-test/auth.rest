@@ -1,0 +1,5 @@
+POST "https://e-dates-backend.onrender.com/api/v1/register"
+
+{
+    "confirmPassword":""
+}

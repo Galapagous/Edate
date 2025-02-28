@@ -1,0 +1,7 @@
+export const USER_URL = 'http://example.com'
+export const REGISTER_URL = '/api/v1/register'
+export const LOGIN_URL = '/api/v1/login'
+export const VERIFY_EMAIL = '/api/v1/verify-email'
+export const PROFILE_URL = 'api/v1/createprofile'
+export const DATING_USER_URL = 'api/v1/create_datingdata'
+export const ADMIRER_URL = 'api/v1/admire'
