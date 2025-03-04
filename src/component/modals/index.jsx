@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { RxCross1 } from 'react-icons/rx';
 
 const Modal = ({ children, showModal, setShowModal, size = 'md', height }) => {
@@ -25,7 +25,7 @@ const Modal = ({ children, showModal, setShowModal, size = 'md', height }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4`}
+    className={`fixed inset-0 z-[1000] flex items-center justify-center p-4`}
       onClick={() => setShowModal(false)}
     >
       {/* Overlay */}

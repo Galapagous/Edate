@@ -272,3 +272,252 @@ const Settings = () => {
 };
 
 export default Settings;
+
+// ----- version 2 -------
+// import React, { useState } from 'react';
+// import Loader from '../../loader';
+// import { useMakerequest } from '../../../hook/useMakeRequest';
+// import { DATING_USER_URL } from '../../../constant/resources';
+
+// const Settings = () => {
+//   const [profile, setProfile] = useState({
+//     occupation: "",
+//     hobbies: "", // Still a string for textarea
+//     genotype: "",
+//     bloodGroup: "",
+//     bio: "",
+//     religion: "",
+//     pictures: []
+//   });
+
+//   const [selectedFiles, setSelectedFiles] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const makeRequest = useMakerequest();
+
+//   const genotypeOptions = ["AA", "AS", "SS", "AC", "SC"];
+//   const bloodGroupOptions = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+//   const religionOptions = [
+//     "Christianity", "Islam", "Hinduism", "Buddhism", "Judaism", "Sikhism",
+//     "Traditional Religion", "Spiritual but not religious", "Agnostic", "Atheism",
+//     "Prefer not to say", "Other"
+//   ];
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setProfile(prev => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleSelectChange = (e) => {
+//     const { name, value } = e.target;
+//     setProfile(prev => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleFileChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     setSelectedFiles(files); // Store raw files
+//     const newImageUrls = files.map(file => URL.createObjectURL(file));
+//     setProfile(prev => ({
+//       ...prev,
+//       pictures: newImageUrls // Preview URLs only
+//     }));
+//   };
+
+//   const removeImage = (index) => {
+//     const newPictures = [...profile.pictures];
+//     const newFiles = [...selectedFiles];
+//     newPictures.splice(index, 1);
+//     newFiles.splice(index, 1);
+//     setProfile(prev => ({ ...prev, pictures: newPictures }));
+//     setSelectedFiles(newFiles);
+//   };
+
+//   const saveChanges = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     // Convert hobbies string to array (split by commas or treat as single item)
+//     const hobbiesArray = profile.hobbies.trim()
+//       ? profile.hobbies.split(',').map(hobby => hobby.trim()).filter(hobby => hobby)
+//       : [];
+
+//     // Prepare payload as JSON
+//     const payload = {
+//       genotype: profile.genotype,
+//       hobbies: hobbiesArray, // Now an array
+//       occupation: profile.occupation,
+//       bloodgroup: profile.bloodGroup, // Match backend field name
+//     };
+
+//     // Convert files to Base64 if backend expects it
+//     const base64Pictures = await Promise.all(
+//       selectedFiles.map(file =>
+//         new Promise((resolve) => {
+//           const reader = new FileReader();
+//           reader.onload = () => resolve(reader.result);
+//           reader.readAsDataURL(file);
+//         })
+//       )
+//     );
+//     if (base64Pictures.length > 0) {
+//       payload.pictures = base64Pictures;
+//     }
+
+//     makeRequest(
+//       DATING_USER_URL,
+//       'POST',
+//       payload, // Send as JSON
+//       (data) => { console.log(data); },
+//       (error) => { console.log(error); },
+//       () => { setLoading(false); },
+//       { 'Content-Type': 'application/json' } // Ensure JSON headers
+//     );
+//   };
+
+//   return (
+//     <div className="w-full max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+//       <div className="p-6 border-b">
+//         <h2 className="text-2xl font-bold text-gray-800">Profile Settings</h2>
+//         <p className="text-sm text-gray-500">Update your profile information that will be visible to other users</p>
+//       </div>
+      
+//       <div className="p-6 space-y-6">
+//         <div className="space-y-2">
+//           <label htmlFor="bio" className="block text-sm font-medium text-gray-700">About Me</label>
+//           <textarea
+//             id="bio"
+//             name="bio"
+//             rows="4"
+//             placeholder="Tell others about yourself..."
+//             value={profile.bio}
+//             onChange={handleInputChange}
+//             className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           />
+//           <p className="text-xs text-gray-500">Your bio is one of the first things people will read about you.</p>
+//         </div>
+        
+//         <div className="space-y-2">
+//           <label htmlFor="occupation" className="block text-sm font-medium text-gray-700">Occupation</label>
+//           <input
+//             type="text"
+//             id="occupation"
+//             name="occupation"
+//             placeholder="What do you do for work?"
+//             value={profile.occupation}
+//             onChange={handleInputChange}
+//             className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           />
+//         </div>
+        
+//         <div className="space-y-2">
+//           <label htmlFor="religion" className="block text-sm font-medium text-gray-700">Religion</label>
+//           <select
+//             id="religion"
+//             name="religion"
+//             value={profile.religion}
+//             onChange={handleSelectChange}
+//             className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           >
+//             <option value="" disabled>Select your religion</option>
+//             {religionOptions.map(option => (
+//               <option key={option} value={option}>{option}</option>
+//             ))}
+//           </select>
+//         </div>
+        
+//         <div className="space-y-2">
+//           <label htmlFor="hobbies" className="block text-sm font-medium text-gray-700">Hobbies & Interests</label>
+//           <textarea
+//             id="hobbies"
+//             name="hobbies"
+//             rows="3"
+//             placeholder="Enter hobbies separated by commas (e.g., reading, swimming)"
+//             value={profile.hobbies}
+//             onChange={handleInputChange}
+//             className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           />
+//           <p className="text-xs text-gray-500">Separate multiple hobbies with commas.</p>
+//         </div>
+        
+//         <div className="space-y-2">
+//           <label htmlFor="genotype" className="block text-sm font-medium text-gray-700">Genotype</label>
+//           <select
+//             id="genotype"
+//             name="genotype"
+//             value={profile.genotype}
+//             onChange={handleSelectChange}
+//             className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           >
+//             <option value="" disabled>Select your genotype</option>
+//             {genotypeOptions.map(option => (
+//               <option key={option} value={option}>{option}</option>
+//             ))}
+//           </select>
+//         </div>
+        
+//         <div className="space-y-2">
+//           <label htmlFor="bloodGroup" className="block text-sm font-medium text-gray-700">Blood Group</label>
+//           <select
+//             id="bloodGroup"
+//             name="bloodGroup"
+//             value={profile.bloodGroup}
+//             onChange={handleSelectChange}
+//             className="w-full px-3 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//           >
+//             <option value="" disabled>Select your blood group</option>
+//             {bloodGroupOptions.map(option => (
+//               <option key={option} value={option}>{option}</option>
+//             ))}
+//           </select>
+//         </div>
+        
+//         <div className="space-y-4">
+//           <label className="block text-sm font-medium text-gray-700">Profile Pictures</label>
+//           <div className="grid grid-cols-3 gap-4">
+//             {profile.pictures.map((imageUrl, index) => (
+//               <div key={index} className="relative group">
+//                 <img 
+//                   src={imageUrl} 
+//                   alt={User upload ${index}} 
+//                   className="w-full h-32 object-cover rounded-md"
+//                 />
+//                 <button 
+//                   onClick={() => removeImage(index)}
+//                   className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+//                 >
+//                   Remove
+//                 </button>
+//               </div>
+//             ))}
+//             {profile.pictures.length < 4 && (
+//               <div className="border-2 border-dashed border-gray-300 rounded-md flex items-center justify-center h-32 cursor-pointer hover:border-gray-400 transition-colors">
+//                 <label className="cursor-pointer flex flex-col items-center justify-center w-full h-full">
+//                   <span className="text-sm text-gray-500">+ Add Image</span>
+//                   <input
+//                     type="file"
+//                     accept="image/*"
+//                     multiple
+//                     onChange={handleFileChange}
+//                     className="hidden"
+//                   />
+//                 </label>
+//               </div>
+//             )}
+//           </div>
+//           <p className="text-xs text-gray-500">Upload up to 6 pictures. First image will be your main profile picture.</p>
+//         </div>
+//       </div>
+      
+//       <div className="px-6 py-4 bg-gray-50 border-t">
+//         <button 
+//           onClick={saveChanges} 
+//           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+//           disabled={loading}
+//         >
+//           {loading ? 'Loading...' : 'Update'}
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Settings;

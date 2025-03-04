@@ -4,7 +4,7 @@ const Card = ({color, icon, title, value}) => {
   return (
     <div
       style={{backgroundColor: color}}
-      className={`w-full h-[7.5rem] text-white rounded-md p-4 flex flex-col justify-between`}
+      className={`w-full h-[7.5rem] text-white rounded-md p-4 flex flex-col justify-between relative z-10`}
     >
       <div className="w-full flex justify-between gap-4">
         <p className="text-neut-400 text-base">{title}</p>

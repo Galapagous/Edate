@@ -15,11 +15,17 @@ const StepFour = ({handleChange}) => {
   ];
 
   const toggleInterest = (id) => {
-    setSelectedInterests(prev => 
-      prev.includes(id)
-        ? prev.filter(item => item !== id)
-        : [...prev, id]
-    );
+    setSelectedInterests((prev) => {
+      const updatedInterests = prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id];
+
+      handleChange({
+        target: { name: 'interests', value: updatedInterests }, // Send data to the parent
+      });
+
+      return updatedInterests;
+    });
   };
 
   return (
@@ -30,10 +36,10 @@ const StepFour = ({handleChange}) => {
         {interests.map((interest) => (
           <div
             key={interest.id}
-            onClick={() => toggleInterest(interest.id)}
+            onClick={() => toggleInterest(interest.label)}
             className={`
               px-2 py-1 w-fit  text-sm rounded-full border transition-all duration-200
-              ${selectedInterests.includes(interest.id)
+              ${selectedInterests.includes(interest.label)
                 ? 'bg-main_200 text-white border-main_100'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-blue-500'
               }

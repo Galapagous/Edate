@@ -29,13 +29,24 @@ const Onboarding = () => {
   
   const widthPercentage = (currentStep / 9) * 100
 
-  const handleChange = async (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0])
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+  
+    if (name === 'interest') {
+      setProfile((prev) => ({
+        ...prev,
+        interests: value, // Update the interests field in profile
+      }));
+    }else if(e.target.files && e.target.files[0]) {
+         setFile(e.target.files[0])
     } else {
-      setProfile({ ...profile, [e.target.name]: e.target.value });
+      setProfile((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
+  
 
   const views = {
     1:<StepOne handleChange={handleChange}/>,
