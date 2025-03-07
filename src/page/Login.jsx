@@ -22,7 +22,7 @@ function Login() {
       'POST',
       userDetails,
       (data) => {
-        localStorage.setItem("_dl_token", data?.metadata);
+        localStorage.setItem({_dl_token: data?.metadata, userId: data?.user?.userId});
         setUserInfo(data); // Update user info in context
         setIsloggedIn(true); // Set login status in context
         navigate('/entry');

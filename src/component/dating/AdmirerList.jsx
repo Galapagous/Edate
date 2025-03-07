@@ -1,10 +1,34 @@
 import React, { useState } from 'react'
 import { BiUser } from 'react-icons/bi'
 import { GrLike } from 'react-icons/gr'
+import { useMakerequest } from '../../hook/useMakeRequest'
+import { REQUEST_RESPONSE_URL } from '../../constant/resources'
+import Admirer from './Admirer'
 
-const AdmirerList = ({admirers, requests}) => {
+const AdmirerList = ({admirers, requests, setShowModal}) => {
 
   const [activeTab, setActiveTab] = useState("request")
+  const makeRequest = useMakerequest()
+
+
+  const handleResponse = (userId, response)=>{
+    makeRequest(
+      REQUEST_RESPONSE_URL,
+      'POST',
+      {
+        action:response,
+        senderProfileId: userId,
+      },
+      console.log,
+      (err) => {
+        console.log(err)
+      },
+      ()=>{
+        setLoading(false)
+        setShowModal(false)
+      }
+    );
+  }
 
   const handleSwitchTab = (tab)=>{
     setActiveTab(tab)  // Call the request function with the new tab
@@ -41,14 +65,7 @@ const AdmirerList = ({admirers, requests}) => {
         {activeTab === "request" ?
           requests?.map((request, index)=>{
             return(
-              <div key={index} className='flex items-center justify-start w-full space-x-2 text-gray-700'>
-                <img
-                  className='w-8 h-8 rounded-full object-cover border-2 border-orange-300 shadow-sm'
-                  src={request?.profilePicture}
-                  alt='sender'
-                />
-                <p>{request?.firstName} {request?.sender?.lastName}</p>
-              </div>
+              <Admirer key={index} request={request} setShowModal={setShowModal}/>
             )
           }) : null
         }

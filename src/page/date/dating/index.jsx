@@ -20,7 +20,7 @@ const DatingHomepage = () => {
   const navigate = useNavigate()
 
   useEffect(()=>{
-    // console.log(userData)
+    console.log('user -->',userData)
     if(!userData?.userInfo?.profile?.datingProfile){
       navigate(`/dating?filter='Settings'`)
       // setSearchParams('filter', 'Settings')

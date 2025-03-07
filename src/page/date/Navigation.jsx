@@ -26,8 +26,6 @@ const Navigation = ({ setSearchParams }) => {
   const {data:admirerData } = useFetchData(GET_ADMIRER)
   const {data:requestData } = useFetchData(GET_INVITATION)
 
-  console.log('first --->', requestData)
-
   const handleFilterClick = (filter) => {
     setSearchParams({ filter });
   };
@@ -68,15 +66,15 @@ const Navigation = ({ setSearchParams }) => {
 
       {/* Right - Profile */}
       <button onClick={()=>{setShowAdmirers(true)}} className="relative cursor-pointer flex items-center justify-center gap-2">
-      <div className='relative border-2'>
-          {admirerData?.admirersCount > 0 ? 
-          <span className='absolute top-0 left-0 w-5 h-5 flex items-center justify-center text-white bg-red-500 p-[2px] rounded-full'>{admirerData?.admirersCount}</span>
-          :
-          null  }
-          {admirerData?.admirersCount > 0 ? 
-          <span className='absolute top-0 left-10 w-5 h-5 flex items-center justify-center text-white bg-blue-500 p-[2px] rounded-full'>{admirerData?.admirersCount}</span>
-          :
-          null  }
+        <div className='relative border-2'>
+            {admirerData?.admirersCount > 0 ? 
+            <span className='absolute top-0 left-0 w-5 h-5 flex items-center justify-center text-white bg-red-500 p-[2px] rounded-full'>{admirerData?.admirersCount}</span>
+            :
+            null  }
+            {requestData?.pendingInvitations > 0 ? 
+            <span className='absolute top-0 left-10 w-5 h-5 flex items-center justify-center text-white bg-blue-500 p-[2px] rounded-full'>{requestData?.pendingInvitations}</span>
+            :
+            null  }
         </div>
         <img
           className="w-8 h-8 rounded-full object-cover border-2 border-orange-300 shadow-sm"
@@ -87,7 +85,7 @@ const Navigation = ({ setSearchParams }) => {
       </button>
       <Modal showModal={showAdmirers} setShowModal={()=>{setShowAdmirers(false)}}>
         <div className="flex flex-col items-center justify-center gap-4">
-          <AdmirerList admirers={admirerData?.admirers} requests={[]}/>
+          <AdmirerList admirers={admirerData?.admirers} requests={requestData?.pendingInvitations} setShowModal={()=>{setShowAdmirers(false)}}/>
         </div>
       </Modal>
     </div>
