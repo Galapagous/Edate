@@ -1,99 +1,117 @@
 import { useState } from "react";
-import { FaPaperPlane } from "react-icons/fa";
+import { conversations, listenerData } from "./data";
+import { FaPaperPlane, FaUser } from "react-icons/fa";
 
 const Message = () => {
-  const [listeners] = useState(["Listener 1", "Listener 2", "Listener 3"]);
-  const [activeListener, setActiveListener] = useState(listeners[0]);
-  const [messages, setMessages] = useState({});
-  const [message, setMessage] = useState("");
-
-  const sendMessage = () => {
-    if (message.trim()) {
-      const newMessage = {
-        text: message,
-        sender: "You",
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      };
-
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        [activeListener]: [...(prevMessages[activeListener] || []), newMessage],
-      }));
-      setMessage("");
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      sendMessage();
-    }
+  const [activeConversation, setActiveConversation] = useState(0);
+  // const [currentConversation, setCurrentConversation] = useState(conversations);
+  const currentConversation = conversations[activeConversation];
+  const handleSelection = (index) => {
+    setActiveConversation(index);
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 flex space-x-6 h-[90%]">
-      {/* Listeners List */}
-      <div className="w-1/3 p-4 shadow-lg border rounded-lg bg-white">
-        <h2 className="text-lg font-semibold mb-4">Listeners</h2>
-        <ul>
-          {listeners.map((listener, index) => (
-            <li
-              key={index}
-              className={`cursor-pointer p-2 rounded mb-2 transition-colors ${
-                activeListener === listener
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-              onClick={() => setActiveListener(listener)}
-            >
-              {listener}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Chat Window */}
-      <div className="w-2/3 p-6 shadow-lg border rounded-lg bg-white flex flex-col">
-        <h2 className="text-lg font-semibold mb-4">Chat with {activeListener}</h2>
-
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto border p-4 rounded bg-gray-50 mb-4">
-          {(messages[activeListener] || []).map((msg, index) => (
+    <div className="w-full h-full bg-gray-50 grid grid-cols-4">
+      {/* --- list of listeners online ---- */}
+      <div className="col-span-1 h-full">
+        {listenerData.map((eachListener, index) => {
+          return (
             <div
               key={index}
-              className={`mb-3 ${
-                msg.sender === "You" ? "text-right" : "text-left"
-              }`}
+              className={`${
+                index === activeConversation
+                  ? "bg-white border-l-2 border-red-500"
+                  : ""
+              } cursor-pointer hover:bg-gray-200`}
+              onClick={() => {
+                handleSelection(index);
+              }}
             >
-              <div
-                className={`inline-block p-2 rounded-lg max-w-[70%] ${
-                  msg.sender === "You"
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-              >
-                <span>{msg.text}</span>
-                <span className="block text-xs mt-1 opacity-70">{msg.time}</span>
+              <div className="p-2 flex items-start justify-start gap-2">
+                <img
+                  src={eachListener?.profile}
+                  alt="chat profile"
+                  className="w-10 h-10 rounded-md border-2 object-cover"
+                />
+                <div className="text-sm flex flex-col items-start justify-between h-full">
+                  <p className="font-semibold text-gray-800">
+                    {eachListener?.fullName}
+                  </p>
+                  <p className="text-gray-600 text-xs">
+                    {eachListener?.message}
+                  </p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Message Input */}
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="flex-1 border p-2 rounded focus:outline-none focus:border-blue-500"
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center gap-1 transition-colors"
-          >
-            <FaPaperPlane /> Send
-          </button>
+          );
+        })}
+      </div>
+      <div className="col-span-3 p-2 h-[140%]">
+        <nav className="w-full shadow-md p-2">
+          {
+            <div className="flex items-start justify-start gap-1">
+              <img
+                src={listenerData[activeConversation].profile}
+                className="w-10 h-10 rounded-full object-cover"
+                alt="user profile"
+              />
+              <div>
+                <p className="font-semibold text-gray-700 text-sm">
+                  {listenerData[activeConversation].fullName}
+                </p>
+                <p className="text-xs text-gray-600">Active Now</p>
+              </div>
+            </div>
+          }
+        </nav>
+        <div className="mt-1 bg-white p-3 h-full relative">
+          {currentConversation?.message?.map((conversation, index) => {
+            return (
+              <div key={index} className="mb-1">
+                {
+                  <div>
+                    <div
+                      className={`flex items-start ${
+                        conversation.from === "me"
+                          ? "justify-end"
+                          : "justify-start"
+                      } gap-2`}
+                    >
+                      {conversation.from === "me" ? (
+                        <FaUser />
+                      ) : (
+                        <img
+                          src={listenerData[activeConversation].profile}
+                          alt="chat profile"
+                          className="w-6 h-6 rounded-md border-2 object-cover"
+                        />
+                      )}
+                      <div className="text-sm p-2 bg-gray-200 flex flex-col items-start justify-between h-full min-w-[100px]">
+                        <p className="font-semibold w-full text-gray-800">
+                          {conversation.from === "me"
+                            ? "You"
+                            : listenerData[activeConversation].fullName}
+                        </p>
+                        <p className="text-gray-600 w-full text-xs">
+                          {conversation.content}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            );
+          })}
+          <form className="flex absolute border-2 bottom-0 left-0 items-center justify-center w-full">
+            <input
+              className="w-full p-1 outline-none"
+              type="text"
+              placeholder="type your message"
+            />
+            <button className="px-4 bg-green-600 text-white py-2 rounded-sm">
+              <FaPaperPlane />
+            </button>
+          </form>
         </div>
       </div>
     </div>

@@ -1,125 +1,299 @@
+// import { useState, useEffect } from "react";
+// import { ImPhoneHangUp } from "react-icons/im";
+// import { IoCall } from "react-icons/io5";
+// import { getOnlineReciever } from "./data";
+
+// const Call = () => {
+//   const [isCalling, setIsCalling] = useState(false);
+//   const [activeCalls, setActiveCalls] = useState([]);
+//   const [selectedReceiver, setSelectedReceiver] = useState(null);
+//   const [callStatus, setCallStatus] = useState("ready");
+//   const [currentCallId, setCurrentCallId] = useState(null);
+//   const [callDuration, setCallDuration] = useState(0);
+//   const [timerId, setTimerId] = useState(null);
+
+//   // Format time in MM:SS
+//   const formatTime = (seconds) => {
+//     const minutes = Math.floor(seconds / 60);
+//     const remainingSeconds = seconds % 60;
+//     return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+//       .toString()
+//       .padStart(2, "0")}`;
+//   };
+
+//   // Start call timer
+//   const startTimer = () => {
+//     const id = setInterval(() => {
+//       setCallDuration((prev) => prev + 1);
+//     }, 1000);
+//     setTimerId(id);
+//   };
+
+//   // Stop call timer
+//   const stopTimer = () => {
+//     if (timerId) {
+//       clearInterval(timerId);
+//       setTimerId(null);
+//     }
+//   };
+
+//   const handleStartCall = () => {
+//     if (!isCalling && selectedReceiver) {
+//       setIsCalling(true);
+//       setCallStatus("calling");
+
+//       // Simulate call ringing (2 seconds delay before connecting)
+//       setTimeout(() => {
+//         const newCallId = `call_${Date.now()}`;
+//         setCurrentCallId(newCallId);
+//         setCallStatus("connected");
+//         setActiveCalls((prev) => [
+//           ...prev,
+//           {
+//             id: newCallId,
+//             participants: 2,
+//             receiver: selectedReceiver.fullName,
+//           },
+//         ]);
+//         startTimer();
+//       }, 2000);
+//     } else if (isCalling) {
+//       // End call
+//       setIsCalling(false);
+//       setCallStatus("ready");
+//       setCurrentCallId(null);
+//       stopTimer();
+//       setCallDuration(0);
+//     }
+//   };
+
+//   const handleJoinCall = (callId) => {
+//     setIsCalling(true);
+//     setCurrentCallId(callId);
+//     setCallStatus("connected");
+//     startTimer();
+//   };
+
+//   const handleSelection = (receiver) => {
+//     setSelectedReceiver(receiver);
+//   };
+
+//   // Cleanup timer on component unmount
+//   useEffect(() => {
+//     return () => stopTimer();
+//   }, []);
+
+//   return (
+//     <div className="bg-background_primary w-full h-full relative p-2">
+//       <section className="m-5 relative bg-white p-4 h-[400px] rounded-lg shadow-md">
+//         <h1 className="mb-6 font-semibold text-xl text-gray-700">
+//           Call Center
+//         </h1>
+
+//         <div className="flex flex-col items-center justify-center h-[80%] gap-4">
+//           {/* Status Indicator */}
+//           <div className="text-lg font-medium mb-4">
+//             {callStatus === "connected" ? (
+//               <div className="flex items-center gap-2">
+//                 <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+//                 <span className="text-green-600">
+//                   Call Connected ({formatTime(callDuration)})
+//                 </span>
+//               </div>
+//             ) : callStatus === "calling" ? (
+//               <div className="flex items-center gap-2">
+//                 <span className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse" />
+//                 <span className="text-yellow-600">Calling...</span>
+//               </div>
+//             ) : (
+//               <div className="flex items-center gap-2">
+//                 <span className="w-3 h-3 bg-gray-300 rounded-full" />
+//                 <span className="text-gray-500">Ready to Call</span>
+//               </div>
+//             )}
+//           </div>
+
+//           {/* Call Button */}
+//           <button
+//             onClick={handleStartCall}
+//             disabled={!selectedReceiver && !isCalling}
+//             className={`transition-all duration-300 p-6 rounded-full shadow-lg
+//               ${
+//                 isCalling
+//                   ? "bg-red-500 hover:bg-red-600 animate-pulse"
+//                   : "bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+//               }`}
+//           >
+//             {isCalling ? (
+//               <ImPhoneHangUp className="w-8 h-8 text-white animate-bounce" />
+//             ) : (
+//               <IoCall className="w-8 h-8 text-white" />
+//             )}
+//           </button>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default Call;
+
+// ------ version 2 ---------
 import { useState, useEffect } from "react";
 import { ImPhoneHangUp } from "react-icons/im";
 import { IoCall } from "react-icons/io5";
-import { getOnlineReciever } from "./data";
+import { getOnlineReciever } from "./data"; // Assuming this returns online receivers
 
 const Call = () => {
   const [isCalling, setIsCalling] = useState(false);
-  const [activeCalls, setActiveCalls] = useState([]);
-  const [selectedCall, setSelectedCall] = useState(null);
-  const [callStatus, setCallStatus] = useState("ready"); // ready, calling, connected
-  const [currentCallId, setCurrentCallId] = useState(null);
+  const [callStatus, setCallStatus] = useState("ready"); // "ready", "ringing", "connected"
+  const [currentReceiver, setCurrentReceiver] = useState(null); // Receiver who picks up
+  const [callDuration, setCallDuration] = useState(0);
+  const [timerId, setTimerId] = useState(null);
 
-  const handleCall = ()=>{
-    alert('call selected')
-  }
+  // Format time in MM:SS
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
-  const handleStartCall = ()=>{
-    alert('call started')
-  }
+  // Start call timer
+  const startTimer = () => {
+    const id = setInterval(() => {
+      setCallDuration((prev) => prev + 1);
+    }, 1000);
+    setTimerId(id);
+  };
 
-  const handleJoinCall = ()=>{
-    alert('call started')
-  }
+  // Stop and reset call timer
+  const stopTimer = () => {
+    if (timerId) {
+      clearInterval(timerId);
+      setTimerId(null);
+      setCallDuration(0);
+    }
+  };
 
+  const handleCallAction = () => {
+    if (!isCalling) {
+      // Start the call process
+      setIsCalling(true);
+      setCallStatus("ringing");
 
-  const handleSelection = ()=>{
-    alert('selection made')
-  }
+      // Simulate an online receiver picking up after a delay (e.g., 2-5 seconds)
+      const onlineReceivers = getOnlineReciever();
+      if (onlineReceivers.length > 0) {
+        const randomDelay = Math.floor(Math.random() * 3000) + 2000; // 2-5 seconds
+        setTimeout(() => {
+          const receiver =
+            onlineReceivers[Math.floor(Math.random() * onlineReceivers.length)];
+          setCurrentReceiver(receiver);
+          setCallStatus("connected");
+          startTimer();
+        }, randomDelay);
+      } else {
+        // No receivers available, end the call attempt after a timeout
+        setTimeout(() => {
+          if (callStatus === "ringing") {
+            setIsCalling(false);
+            setCallStatus("ready");
+            alert("No one picked up the call.");
+          }
+        }, 5000); // 5-second timeout
+      }
+    } else {
+      // End the call
+      setIsCalling(false);
+      setCallStatus("ready");
+      setCurrentReceiver(null);
+      stopTimer();
+    }
+  };
 
+  // Cleanup timer on component unmount
+  useEffect(() => {
+    return () => stopTimer();
+  }, []);
 
   return (
-    <div className="bg-backgound_primary w-full h-full relative p-2">
-      <section className="m-5 relative bg-white p-4 h-[90%] rounded-lg shadow-md">
-        <h1 className="mb-6 font-semibold text-xl text-gray-700">
+    <div className="bg-gray-100 min-h-screen w-full flex items-center justify-center p-4">
+      <section className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+        {/* Header */}
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
           Call Center
         </h1>
-        
-        <div className="flex flex-col items-center justify-center h-[80%] gap-4">
+
+        {/* Main Content */}
+        <div className="flex flex-col items-center justify-center gap-6">
           {/* Status Indicator */}
-          <div className="text-lg font-medium mb-4">
-            {callStatus === "connected" ? (
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse"/>
-                <span className="text-green-600">Call Connected</span>
-              </div>
-            ) : callStatus === "calling" ? (
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"/>
-                <span className="text-yellow-600">Calling...</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 bg-gray-300 rounded-full"/>
-                <span className="text-gray-500">Ready to Call</span>
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span
+                className={`w-3 h-3 rounded-full animate-pulse ${
+                  callStatus === "connected"
+                    ? "bg-green-500"
+                    : callStatus === "ringing"
+                    ? "bg-yellow-500"
+                    : "bg-gray-300"
+                }`}
+              />
+              <span
+                className={`text-lg font-medium ${
+                  callStatus === "connected"
+                    ? "text-green-600"
+                    : callStatus === "ringing"
+                    ? "text-yellow-600"
+                    : "text-gray-500"
+                }`}
+              >
+                {callStatus === "connected"
+                  ? "Connected"
+                  : callStatus === "ringing"
+                  ? "Ringing..."
+                  : "Ready to Call"}
+              </span>
+            </div>
+
+            {/* Call Info */}
+            {callStatus !== "ready" && (
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  {callStatus === "ringing"
+                    ? "Waiting for someone to pick up..."
+                    : `Speaking with ${currentReceiver?.fullName || "Unknown"}`}
+                </p>
+                {callStatus === "connected" && (
+                  <p className="text-xl font-mono text-gray-700 mt-1">
+                    {formatTime(callDuration)}
+                  </p>
+                )}
               </div>
             )}
           </div>
 
           {/* Call Button */}
           <button
-            onClick={handleStartCall}
-            className={`transition-all duration-300 p-6 rounded-full shadow-lg 
-              ${isCalling 
-                ? "bg-red-500 hover:bg-red-600 animate-pulse" 
-                : "bg-green-500 hover:bg-green-600"
-              }`}
+            onClick={handleCallAction}
+            className={`p-6 rounded-full shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              isCalling
+                ? "bg-red-500 hover:bg-red-600 focus:ring-red-300 animate-pulse"
+                : "bg-green-500 hover:bg-green-600 focus:ring-green-300"
+            }`}
           >
             {isCalling ? (
-              <ImPhoneHangUp className="w-8 h-8 text-white animate-bounce"/>
+              <ImPhoneHangUp className="w-8 h-8 text-white animate-bounce" />
             ) : (
-              <IoCall className="w-8 h-8 text-white"/>
+              <IoCall className="w-8 h-8 text-white" />
             )}
           </button>
 
-          {/* Active Calls Section */}
-          <div className="w-full max-w-md mt-8">
-            <h2 className="text-lg font-semibold mb-4 text-gray-700">Active Calls</h2>
-            <div className="space-y-2">
-              {activeCalls.map((call) => (
-                <div 
-                  key={call.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"/>
-                    <span className="text-gray-700">Call ID: {call.id.substr(0, 8)}...</span>
-                    <span className="text-sm text-gray-500">
-                      {call.participants} participant(s)
-                    </span>
-                  </div>
-                  {!isCalling && (
-                    <button
-                      onClick={() => handleJoinCall(call.id)}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-                    >
-                      Join Call
-                    </button>
-                  )}
-                </div>
-              ))}
-              {activeCalls.length === 0 && (
-                <p className="text-center text-gray-500 py-4">
-                  No active calls available
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Online Listeners Section */}
-        <div className="absolute bottom-1 right-1 p-[1rem]">
-          <h1 className="mb-2 font-thin text-[1rem]">Online listeners</h1>
-          {getOnlineReciever().map((receiver) => (
-            <button 
-              key={receiver.fullName}
-              onClick={() => handleSelection(receiver)}
-              className="flex items-center justify-start w-full gap-2 cursor-pointer p-2 hover:bg-blue-500 hover:text-white px-3"
-            >
-              {receiver.avatar}
-              <h1>{receiver.fullName}</h1>
-            </button>
-          ))}
+          {/* Online Receivers Count */}
+          <p className="text-sm text-gray-500 mt-4">
+            Online Receivers: {getOnlineReciever().length}
+          </p>
         </div>
       </section>
     </div>

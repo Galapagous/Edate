@@ -1,4 +1,12 @@
-import { BiHome, BiMessage, BiPhone, BiWallet } from "react-icons/bi";
+import {
+  BiFemale,
+  BiHome,
+  BiMale,
+  BiMessage,
+  BiPhone,
+  BiUser,
+  BiWallet,
+} from "react-icons/bi";
 import { SiSession } from "react-icons/si";
 import Overview from "./overview/Overview";
 import Calls from "./call/Calls";
@@ -7,39 +15,43 @@ import Message from "./messages/Message";
 import Wallet from "./wallet/Wallet";
 import Settings from "./settings/Sessions";
 
-export const getSidebarMenu = (userId)=> [
-    {
-        name: 'Overview',
-        link: `/listen/${userId}`,
-        icon: BiHome
-    },
-    {
-        name: 'Calls',
-        link: `/calls/${userId}`,
-        icon: BiPhone
-    },
-    {
-        name: 'Wallet',
-        link: `/wallet/${userId}`,
-        icon: BiWallet
-    },
-    {
-        name: 'Messages',
-        link: `/messages/${userId}`,
-        icon: BiMessage
-    },
-    {
-        name: 'Settings',
-        link: `/settings/${userId}`,
-        icon: SiSession
-    },
-]
-
+export const getSidebarMenu = (userId) => [
+  {
+    name: "Dating",
+    link: `/dating`,
+    icon: BiHome,
+  },
+  {
+    name: "Companion",
+    link: `/companion`,
+    icon: BiPhone,
+  },
+  {
+    name: "Thank for coming",
+    link: `/thanks/${userId}`,
+    icon: BiWallet,
+  },
+  {
+    name: "Couple",
+    link: `/couple/${userId}`,
+    icon: BiMessage,
+  },
+  {
+    name: "Sugar Daddy",
+    link: `/sugar_daddy/${userId}`,
+    icon: BiMale,
+  },
+  {
+    name: "Sugar Mummy",
+    link: `/sugar_mummy/${userId}`,
+    icon: BiFemale,
+  },
+];
 
 export const getMainPage = {
-    Overview: Overview,
-    Calls: Calls,
-    Messages: Message,
-    Settings: Settings,
-    Wallet: Wallet
-}
+  Overview: Overview,
+  Calls: Calls,
+  Messages: Message,
+  Settings: Settings,
+  Wallet: Wallet,
+};

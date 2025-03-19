@@ -6,6 +6,8 @@ import { LOGIN_URL } from "../constant/resources";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext"; // Adjust the import path to where your AppContext is
+import { useDispatch } from "react-redux";
+import { signinUser } from "../redux/auth/user.slice";
 
 function Login() {
   const [userDetails, setUserDetails] = useState({});
@@ -13,19 +15,23 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const makeRequest = useMakerequest();
   const { setUserInfo, setIsloggedIn } = useContext(AppContext); // Directly use useContext
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     makeRequest(
       LOGIN_URL,
-      'POST',
+      "POST",
       userDetails,
       (data) => {
-        localStorage.setItem({_dl_token: data?.metadata, userId: data?.user?.userId});
+        localStorage.setItem("_dl_token", JSON.stringify(data?.metadata));
+        localStorage.setItem("userId", data?.user?.userId);
+        dispatch(signinUser(data?.profile));
         setUserInfo(data); // Update user info in context
+
         setIsloggedIn(true); // Set login status in context
-        navigate('/entry');
+        navigate("/entry");
       },
       (error) => {
         console.log(error);
@@ -47,12 +53,16 @@ function Login() {
         <form onSubmit={handleSubmit}>
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
-            <p className="text-sm text-gray-600 mt-1">Please login to your account</p>
+            <p className="text-sm text-gray-600 mt-1">
+              Please login to your account
+            </p>
           </div>
 
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Email
+              </label>
               <div className="relative">
                 <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -66,7 +76,9 @@ function Login() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
@@ -88,7 +100,7 @@ function Login() {
             </button>
 
             <Link
-              to='/register'
+              to="/register"
               className="w-full flex justify-center items-center border border-gray-300 text-blue-600 py-2.5 rounded-md font-medium hover:bg-blue-50 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
             >
               Sign Up
@@ -96,8 +108,11 @@ function Login() {
           </div>
 
           <p className="text-center text-sm text-gray-600 mt-6">
-            Forgot password?{' '}
-            <Link to="/reset" className="text-blue-600 hover:text-blue-800 font-medium">
+            Forgot password?{" "}
+            <Link
+              to="/reset"
+              className="text-blue-600 hover:text-blue-800 font-medium"
+            >
               Reset here
             </Link>
           </p>

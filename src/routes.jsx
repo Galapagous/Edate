@@ -15,60 +15,60 @@ import Onboarding from "./page/onboarding";
 import Index from "./page";
 
 export const routes = createBrowserRouter([
-    {
-      path: '/register',
-      element: <Register/>
-    },
-    {
-      path: '/',
-      element: <Homepage/>
-    },
-    {
-      path: '/entry',
-      element: <Index/>
-    },
-    {
-      path: '/login',
-      element: <LoginScreen/>
-    },
-    {
-      path: '/verify_otp',
-      element: <VerifyOTP/>
-    },
-    {
-      path: '/onboarding',
-      element: <Onboarding/>
-    },
-    {
-      path: '/test',
-      element: <Page/>
-    },
-    {
-      path: '/dating',
-      element: <Date/>
-    },
-    {
-      path: '/companion',
-      element: <ListenOnboarding/>
-    },
-    {
-      path: '/listen/:userId',
-      element: <Listen/>
-    },
-    {
-      path: '/speak/:userId',
-      element: <Speak/>
-    },
-    {
-      path: '/thanks/:userId',
-      element: <ThanksForComing/>
-    },
-    {
-      path: '/dashboard/:userId/event/create',
-      element: <EventCreate/>
-    },
-    {
-      path: '/dashboard/:userId/event/manage/:eventId',
-      element: <EventManage/>
-    },
-  ])
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/",
+    element: <Homepage />,
+  },
+  {
+    path: "/entry",
+    element: <Index />,
+  },
+  {
+    path: "/login",
+    element: <LoginScreen />,
+  },
+  {
+    path: "/verify_otp",
+    element: <VerifyOTP />,
+  },
+  {
+    path: "/onboarding",
+    element: <Onboarding />,
+  },
+  {
+    path: "/test",
+    element: <Page />,
+  },
+  {
+    path: "/dating",
+    element: <Date />,
+  },
+  {
+    path: "/companion",
+    element: <ListenOnboarding />,
+  },
+  {
+    path: "/listen/:slug",
+    element: <Listen />,
+  },
+  {
+    path: "/speak/:slug",
+    element: <Speak />,
+  },
+  {
+    path: "/thanks/:userId",
+    element: <ThanksForComing />,
+  },
+  {
+    path: "/dashboard/:userId/event/create",
+    element: <EventCreate />,
+  },
+  {
+    path: "/dashboard/:userId/event/manage/:eventId",
+    element: <EventManage />,
+  },
+]);
